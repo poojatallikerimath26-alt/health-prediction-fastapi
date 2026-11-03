@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% from "_forms.html" import patient_fields, error_list %}
+{% block content %}
+{% if msg %}<div class="alert alert-success">{{ msg }}</div>{% endif %}
+{{ error_list(errors) }}
+
+<div class="card shadow-sm mb-4">
+  <div class="card-header fw-semibold">Add patient record</div>
+  <div class="card-body">
+    <form method="post" action="/patients" class="row g-3">
+      {{ patient_fields(form) }}
+      <div class="col-12">
+        <button class="btn btn-primary" type="submit">Save and generate remarks</button>
+        <span class="text-muted small ms-2">Glucose and cholesterol in mg/dL, haemoglobin in g/dL. Date format dd/mm/yyyy.</span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-header fw-semibold">All records ({{ patients|length }})</div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>#</th><th>Full name</th><th>Date of birth</th><th>Email</th>
+          <th>Glucose</th><th>Haemoglobin</th><th>Cholesterol</th><th>Remarks (AI)</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in patients %}
+        <tr>
+          <td>{{ p.id }}</td>
+          <td>{{ p.full_name }}</td>
+          <td>{{ p.dob }}</td>
+          <td>{{ p.email }}</td>
+          <td>{{ p.glucose }}</td>
+          <td>{{ p.haemoglobin }}</td>
+          <td>{{ p.cholesterol }}</td>
+          <td class="remarks small">{{ p.remarks }}</td>
+          <td class="text-nowrap">
+            <a class="btn btn-sm btn-outline-primary" href="/patients/{{ p.id }}/edit">Edit</a>
+            <form class="d-inline" method="post" action="/patients/{{ p.id }}/regenerate">
+              <button class="btn btn-sm btn-outline-secondary" type="submit">Regenerate</button>
+            </form>
+            <form class="d-inline" method="post" action="/patients/{{ p.id }}/delete"
+                  onsubmit="return confirm('Delete {{ p.full_name }}?');">
+              <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="9" class="text-center text-muted py-4">No records yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% from "_forms.html" import patient_fields, error_list %}
+{% block title %}Edit record{% endblock %}
+{% block content %}
+{{ error_list(errors) }}
+<div class="card shadow-sm">
+  <div class="card-header fw-semibold">Edit record #{{ patient.id }}</div>
+  <div class="card-body">
+    <form method="post" action="/patients/{{ patient.id }}/edit" class="row g-3">
+      {{ patient_fields(form) }}
+      <div class="col-12">
+        <button class="btn btn-primary" type="submit">Save changes</button>
+        <a class="btn btn-outline-secondary" href="/">Cancel</a>
+        <span class="text-muted small ms-2">Remarks are regenerated only if date of birth or blood values change.</span>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
